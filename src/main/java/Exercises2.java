@@ -14,8 +14,15 @@ public class Exercises2 {
     */
 
     public int[] twoSum(int[] nums, int target) {
-        // TODO
-        return null;
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int i = 0; i < nums.length; i++) {
+            int complement = target - nums[i];
+            if (map.containsKey(complement)) {
+                return new int[]{map.get(complement), i};
+            }
+            map.put(nums[i], i);
+        }
+        throw new IllegalArgumentException("No two sum solution");
     }
 
     /*
@@ -49,8 +56,27 @@ public class Exercises2 {
     */
 
     public int romanToInt(String s) {
-        // TODO
-        return 0;
+        Map<Character, Integer> romanMap = new HashMap<>();
+        romanMap.put('I', 1);
+        romanMap.put('V', 5);
+        romanMap.put('X', 10);
+        romanMap.put('L', 50);
+        romanMap.put('C', 100);
+        romanMap.put('D', 500);
+        romanMap.put('M', 1000);
+
+        int sum = 0;
+        int prevValue = 0;
+        for (char c : s.toCharArray()) {
+            int currValue = romanMap.get(c);
+            if (currValue > prevValue) {
+                sum += currValue - 2 * prevValue; // Adjust for previous addition
+            } else {
+                sum += currValue;
+            }
+            prevValue = currValue;
+        }
+        return sum;
     }
 
     /*
@@ -59,11 +85,42 @@ public class Exercises2 {
     */
 
     public List<List<Integer>> permute(int[] nums) {
-        // TODO
-        return null;
+        List<List<Integer>> result = new ArrayList<>();
+        backtrack(result, new ArrayList<>(), nums);
+        return result;
+    }
+
+    private void backtrack(List<List<Integer>> result, List<Integer> tempList, int[] nums) {
+        if (tempList.size() == nums.length) {
+            result.add(new ArrayList<>(tempList));
+        } else {
+            for (int i = 0; i < nums.length; i++) {
+                if (tempList.contains(nums[i])) continue; // element already exists, skip
+                tempList.add(nums[i]);
+                backtrack(result, tempList, nums);
+                tempList.remove(tempList.size() - 1);
+            }
+        }
     }
 
     public static void main(String[] args) {
-        // test your code here!
+        Exercises2 exercises = new Exercises2();
+
+        // Test twoSum
+        int[] nums = {2, 7, 11, 15};
+        int target = 9;
+        int[] result = exercises.twoSum(nums, target);
+        System.out.println("twoSum: " + result[0] + ", " + result[1]); // Output: 0, 1
+
+        // Test romanToInt
+        String roman = "MCMXCIV";
+        int integer = exercises.romanToInt(roman);
+        System.out.println("romanToInt: " + integer); // Output: 1994
+
+        // Test permute
+        int[] permuteNums = {1, 2, 3};
+        List<List<Integer>> permutations = exercises.permute(permuteNums);
+        System.out.println("permute: " + permutations);
+        // Output: [[1, 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1, 2], [3, 2, 1]]
     }
 }
